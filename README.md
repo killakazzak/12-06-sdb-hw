@@ -39,8 +39,7 @@ GRANT REPLICATION SLAVE ON *.* TO 'replication'@'%';
 SHOW GRANTS FOR replication@'%';
 ```
 
-
-
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/f69f8e5d-9f85-4016-8591-b32582b5f09c)
 
 
 ---
