@@ -44,11 +44,12 @@ SHOW GRANTS FOR replication@'%';
 Настройка Master
 
 ```sql
-printf "server_id = 1\nlog_bin = mysql-bin\n" >> /etc/mysql/my.cnf
+printf "[mysqld]\nserver_id = 1\nlog_bin = mysql-bin\n" >> /etc/mysql/my.cnf
 sudo systemctl restart mysql.service && sudo  systemctl status mysql.service
 ```
 
 
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/e400bcae-dfbd-447c-a7c1-e2c4fa122993)
 
 ---
 
