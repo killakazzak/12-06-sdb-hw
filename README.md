@@ -53,6 +53,7 @@ sudo systemctl restart mysql.service && sudo  systemctl status mysql.service
 
 ```sql
 printf "[mysqld]\nserver_id = 2\nlog_bin = mysql-bin\nrelay-log = /var/lib/mysql/mysql-relay-bin\nrelay-log-index = /var/lib/mysql/mysql-relay-bin.index\nread_only = 1\n" >> /etc/mysql/my.cnf
+
 sudo systemctl restart mysql.service && sudo  systemctl status mysql.service
 ```
 
