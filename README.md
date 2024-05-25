@@ -32,7 +32,7 @@ sudo systemctl enable --now  mysql.service && sudo systemctl restart mysql.servi
 
 ![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/6670bd39-f75b-4b0a-9261-544a69e1e4ac)
 
-Создаем учетную запись master для сервера репликации и проверям права:
+Создаем учетную запись master для сервера репликации и проверям права на Master и Slave:
 ```sql
 CREATE USER 'replication'@'%';
 GRANT REPLICATION SLAVE ON *.* TO 'replication'@'%';
@@ -49,6 +49,12 @@ sudo systemctl restart mysql.service && sudo  systemctl status mysql.service
 ```
 ![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/f1577d0f-5539-4832-8933-14199e091882)
 
+Настройка Slave
+
+```sql
+printf "[mysqld]\nserver_id = 2\nlog_bin = mysql-bin\nrelay-log = /var/lib/mysql/mysql-relay-bin\nrelay-log-index = /var/lib/mysql/mysql-relay-bin.index\nread_only = 1\n" >> /etc/mysql/my.cnf
+sudo systemctl restart mysql.service && sudo  systemctl status mysql.service
+```
 
 ---
 
