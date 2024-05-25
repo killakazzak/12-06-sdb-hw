@@ -23,6 +23,7 @@ sudo mysql
 ```
 ```sql
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'My7Pass@Word_9_8A_zE';
+exit
 ```
 
 ---
