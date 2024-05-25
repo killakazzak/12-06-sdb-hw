@@ -16,6 +16,15 @@ sudo apt list --upgradable # get a list of upgrades
 sudo apt upgrade
 sudo apt install mysql-server-8.0
 ```
+Первоначальная настройка SQL сервера
+
+```bash
+sudo mysql
+```
+```sql
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'My7Pass@Word_9_8A_zE';
+```
+
 ---
 
 ### Задание 2
