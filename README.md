@@ -32,6 +32,15 @@ sudo systemctl enable --now  mysql.service && sudo systemctl restart mysql.servi
 
 ![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/6670bd39-f75b-4b0a-9261-544a69e1e4ac)
 
+Создаем учетную запись master для сервера репликации и проверям права:
+```sql
+CREATE USER 'replication'@'%';
+GRANT REPLICATION SLAVE ON *.* TO 'replication'@'%';
+SHOW GRANTS FOR replication@'%';
+```
+
+
+
 
 
 ---
