@@ -28,6 +28,10 @@ exit
 ```bash
 sudo systemctl enable --now  mysql.service && sudo systemctl restart mysql.service && sudo  systemctl status mysql.service
 ```
+Проверка установки
+
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/6670bd39-f75b-4b0a-9261-544a69e1e4ac)
+
 
 
 ---
