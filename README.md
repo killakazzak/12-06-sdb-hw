@@ -47,9 +47,8 @@ SHOW GRANTS FOR replication@'%';
 printf "[mysqld]\nserver_id = 1\nlog_bin = mysql-bin\n" >> /etc/mysql/my.cnf
 sudo systemctl restart mysql.service && sudo  systemctl status mysql.service
 ```
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/f1577d0f-5539-4832-8933-14199e091882)
 
-
-![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/e400bcae-dfbd-447c-a7c1-e2c4fa122993)
 
 ---
 
