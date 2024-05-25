@@ -69,10 +69,16 @@ SHOW MASTER STATUS;
 
 ```sql
 CHANGE MASTER TO MASTER_HOST='ubuntu22-server', MASTER_USER='replication', MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS=157;
-START REPLICA;
+START SLAVE;
 ```
 ![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/ec0fafa2-5986-41ee-8072-7fc07d2b2a98)
 
+Проверка репликации
+
+```sql
+SHOW SLAVE STATUS\G
+```
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/ab6a902f-78b9-4288-8c59-b059fa0fea3d)
 
 ---
 
