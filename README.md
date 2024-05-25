@@ -8,6 +8,14 @@
 
 ### Решение Задание 1
 
+Установка MySQL 8 на Ubuntu 22.04 LTS Linux
+
+```bash
+sudo apt update
+sudo apt list --upgradable # get a list of upgrades
+sudo apt upgrade
+sudo apt install mysql-server-8.0
+```
 ---
 
 ### Задание 2
