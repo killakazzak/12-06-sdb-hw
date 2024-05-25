@@ -34,7 +34,7 @@ sudo systemctl enable --now  mysql.service && sudo systemctl restart mysql.servi
 
 Создаем учетную запись master для сервера репликации и проверям права на Master:
 ```sql
-CREATE USER 'slaveuser@ubuntu22-server' IDENTIFIED WITH mysql_native_password BY 'My7Pass@Word_9_8A_zE';
+CREATE USER 'slaveuser'@'ubuntu22-client' IDENTIFIED WITH mysql_native_password BY 'My7Pass@Word_9_8A_zE';
 GRANT REPLICATION SLAVE ON *.* TO 'slaveuser@ubuntu22-server';
 SHOW GRANTS FOR 'slaveuser@ubuntu22-server';
 ```
@@ -67,7 +67,7 @@ SHOW MASTER STATUS;
 ![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/1b858974-a69f-417d-bb27-695049d4f970)
 
 ```sql
-CHANGE MASTER TO MASTER_HOST='ubuntu22-server', MASTER_USER='replication', MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS=157;
+mysql> CHANGE MASTER TO MASTER_HOST='ubuntu22-server', MASTER_USER='slaveuser', MASTER_PASSWORD='My7Pass@Word_9_8A_zE', MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS=1047;
 START SLAVE;
 ```
 ![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/ec0fafa2-5986-41ee-8072-7fc07d2b2a98)
