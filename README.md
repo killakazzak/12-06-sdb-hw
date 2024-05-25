@@ -43,20 +43,33 @@ SHOW GRANTS FOR replication@'%';
 
 Настройка Master
 
-```sql
+```bash
 printf "[mysqld]\nserver_id = 1\nlog_bin = mysql-bin\n" >> /etc/mysql/my.cnf
 sudo systemctl restart mysql.service && sudo  systemctl status mysql.service
 ```
+
+```sql
+SHOW MASTER STATUS;
+```
+
 ![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/f1577d0f-5539-4832-8933-14199e091882)
 
 Настройка Slave
 
 ```sql
 printf "[mysqld]\nserver_id = 2\nlog_bin = mysql-bin\nrelay-log = /var/lib/mysql/mysql-relay-bin\nrelay-log-index = /var/lib/mysql/mysql-relay-bin.index\nread_only = 1\n" >> /etc/mysql/my.cnf
-
 sudo systemctl restart mysql.service && sudo  systemctl status mysql.service
 ```
 
+
+```sql
+SHOW MASTER STATUS;
+```
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/1b858974-a69f-417d-bb27-695049d4f970)
+
+```sql
+CHANGE MASTER TO MASTER_HOST='ubuntu22-server', MASTER_USER='replication', MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS=157;
+```
 ---
 
 ### Задание 2
