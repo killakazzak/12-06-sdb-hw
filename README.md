@@ -41,6 +41,14 @@ SHOW GRANTS FOR replication@'%';
 
 ![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/f69f8e5d-9f85-4016-8591-b32582b5f09c)
 
+Настройка Master
+
+```sql
+printf "server_id = 1\nlog_bin = mysql-bin\n" >> /etc/mysql/my.cnf
+sudo systemctl restart mysql.service && sudo  systemctl status mysql.service
+```
+
+
 
 ---
 
