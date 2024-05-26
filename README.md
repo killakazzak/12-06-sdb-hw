@@ -248,10 +248,6 @@ scp dump.sql.gz denis@ubuntu22-client:/home/denis/
 ```
 На сервере SLAVE
 
-```sql
-STOP SLAVE;
-```
-
 ```bash
 gunzip dump.sql.gz
 mysql -uroot -p -f < dump.sql
