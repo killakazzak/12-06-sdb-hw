@@ -196,7 +196,7 @@ No query specified
 
 На сервере MASTER
 
-
+```sql
 CREATE DATABASE testdb;
 USE testdb;
 
@@ -214,7 +214,7 @@ CREATE TABLE test3 (
   id INT PRIMARY KEY,
   description TEXT
 );
-
+```
 
 На сервере SLAVE
 
