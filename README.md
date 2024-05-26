@@ -32,52 +32,166 @@ sudo systemctl enable --now  mysql.service && sudo systemctl restart mysql.servi
 
 ![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/6670bd39-f75b-4b0a-9261-544a69e1e4ac)
 
-Создаем учетную запись master для сервера репликации и проверям права на Master:
+На сервере MASTER
+
+Создаем учетную запись для репликации и проверям права
+
 ```sql
 CREATE USER 'slaveuser'@'ubuntu22-client' IDENTIFIED WITH mysql_native_password BY 'My7Pass@Word_9_8A_zE';
-GRANT REPLICATION SLAVE ON *.* TO 'slaveuser@ubuntu22-server';
-SHOW GRANTS FOR 'slaveuser@ubuntu22-server';
+GRANT REPLICATION SLAVE ON *.* TO 'slaveuser'@'ubuntu22-client';
+SHOW GRANTS FOR 'slaveuser'@'ubuntu22-client';
 ```
-![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/8aebc281-fe3b-4577-bd69-146678e5053d)
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/bd0964ba-a409-412e-aeea-98dded9a2154)
 
-Настройка Master
+Настраиваем MySQL
 
 ```bash
 printf "[mysqld]\nserver_id = 1\nlog_bin = mysql-bin\n" >> /etc/mysql/my.cnf
 sudo systemctl restart mysql.service && sudo  systemctl status mysql.service
+mysql -p
 ```
+Получаем информацию о текущем состоянии мастера 
 
 ```sql
 SHOW MASTER STATUS;
 ```
 
-![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/f1577d0f-5539-4832-8933-14199e091882)
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/f72e0d24-1e94-4cb4-8203-30c9f2ea931d)
 
-Настройка Slave
+На сервере MASTER
+
+Настраиваем MySQL
 
 ```sql
 printf "[mysqld]\nserver_id = 2\nlog_bin = mysql-bin\nrelay-log = /var/lib/mysql/mysql-relay-bin\nrelay-log-index = /var/lib/mysql/mysql-relay-bin.index\nread_only = 1\n" >> /etc/mysql/my.cnf
 sudo systemctl restart mysql.service && sudo  systemctl status mysql.service
+mysql -p
 ```
 
-
 ```sql
-SHOW MASTER STATUS;
-```
-![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/1b858974-a69f-417d-bb27-695049d4f970)
-
-```sql
-mysql> CHANGE MASTER TO MASTER_HOST='ubuntu22-server', MASTER_USER='slaveuser', MASTER_PASSWORD='My7Pass@Word_9_8A_zE', MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS=1047;
+CHANGE MASTER TO MASTER_HOST='ubuntu22-server', MASTER_USER='slaveuser', MASTER_PASSWORD='My7Pass@Word_9_8A_zE', MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS=1214;
 START SLAVE;
 ```
-![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/ec0fafa2-5986-41ee-8072-7fc07d2b2a98)
 
-Проверка репликации
+Получаем информацию о текущем состоянии репликации
 
 ```sql
 SHOW SLAVE STATUS\G
 ```
-![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/ab6a902f-78b9-4288-8c59-b059fa0fea3d)
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/7df47013-f090-4f33-bef0-2fbcaf80a737)
+
+Получаем информацию о статусе потоков репликации (replication worker), и позиции репликации, последнем прочитанным бинарный журнал (binary log), текущей задачи репликации и другие связанные данные.
+
+Используя эту команду, можно получить детальную информацию о каждом потоке репликации на сервере базы данных MySQL
+
+```sql
+mysql> SELECT * FROM performance_schema.replication_applier_status_by_worker\G;
+*************************** 1. row ***************************
+                                           CHANNEL_NAME:
+                                              WORKER_ID: 1
+                                              THREAD_ID: 52
+                                          SERVICE_STATE: ON
+                                      LAST_ERROR_NUMBER: 0
+                                     LAST_ERROR_MESSAGE:
+                                   LAST_ERROR_TIMESTAMP: 0000-00-00 00:00:00.000000
+                               LAST_APPLIED_TRANSACTION: ANONYMOUS
+     LAST_APPLIED_TRANSACTION_ORIGINAL_COMMIT_TIMESTAMP: 2024-05-26 17:49:43.777606
+    LAST_APPLIED_TRANSACTION_IMMEDIATE_COMMIT_TIMESTAMP: 2024-05-26 17:49:43.777606
+         LAST_APPLIED_TRANSACTION_START_APPLY_TIMESTAMP: 2024-05-26 17:49:43.775068
+           LAST_APPLIED_TRANSACTION_END_APPLY_TIMESTAMP: 2024-05-26 17:49:43.777417
+                                   APPLYING_TRANSACTION:
+         APPLYING_TRANSACTION_ORIGINAL_COMMIT_TIMESTAMP: 0000-00-00 00:00:00.000000
+        APPLYING_TRANSACTION_IMMEDIATE_COMMIT_TIMESTAMP: 0000-00-00 00:00:00.000000
+             APPLYING_TRANSACTION_START_APPLY_TIMESTAMP: 0000-00-00 00:00:00.000000
+                 LAST_APPLIED_TRANSACTION_RETRIES_COUNT: 0
+   LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_NUMBER: 0
+  LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_MESSAGE:
+LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_TIMESTAMP: 0000-00-00 00:00:00.000000
+                     APPLYING_TRANSACTION_RETRIES_COUNT: 0
+       APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_NUMBER: 0
+      APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_MESSAGE:
+    APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_TIMESTAMP: 0000-00-00 00:00:00.000000
+*************************** 2. row ***************************
+                                           CHANNEL_NAME:
+                                              WORKER_ID: 2
+                                              THREAD_ID: 53
+                                          SERVICE_STATE: ON
+                                      LAST_ERROR_NUMBER: 0
+                                     LAST_ERROR_MESSAGE:
+                                   LAST_ERROR_TIMESTAMP: 0000-00-00 00:00:00.000000
+                               LAST_APPLIED_TRANSACTION:
+     LAST_APPLIED_TRANSACTION_ORIGINAL_COMMIT_TIMESTAMP: 0000-00-00 00:00:00.000000
+    LAST_APPLIED_TRANSACTION_IMMEDIATE_COMMIT_TIMESTAMP: 0000-00-00 00:00:00.000000
+         LAST_APPLIED_TRANSACTION_START_APPLY_TIMESTAMP: 0000-00-00 00:00:00.000000
+           LAST_APPLIED_TRANSACTION_END_APPLY_TIMESTAMP: 0000-00-00 00:00:00.000000
+                                   APPLYING_TRANSACTION:
+         APPLYING_TRANSACTION_ORIGINAL_COMMIT_TIMESTAMP: 0000-00-00 00:00:00.000000
+        APPLYING_TRANSACTION_IMMEDIATE_COMMIT_TIMESTAMP: 0000-00-00 00:00:00.000000
+             APPLYING_TRANSACTION_START_APPLY_TIMESTAMP: 0000-00-00 00:00:00.000000
+                 LAST_APPLIED_TRANSACTION_RETRIES_COUNT: 0
+   LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_NUMBER: 0
+  LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_MESSAGE:
+LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_TIMESTAMP: 0000-00-00 00:00:00.000000
+                     APPLYING_TRANSACTION_RETRIES_COUNT: 0
+       APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_NUMBER: 0
+      APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_MESSAGE:
+    APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_TIMESTAMP: 0000-00-00 00:00:00.000000
+*************************** 3. row ***************************
+                                           CHANNEL_NAME:
+                                              WORKER_ID: 3
+                                              THREAD_ID: 54
+                                          SERVICE_STATE: ON
+                                      LAST_ERROR_NUMBER: 0
+                                     LAST_ERROR_MESSAGE:
+                                   LAST_ERROR_TIMESTAMP: 0000-00-00 00:00:00.000000
+                               LAST_APPLIED_TRANSACTION:
+     LAST_APPLIED_TRANSACTION_ORIGINAL_COMMIT_TIMESTAMP: 0000-00-00 00:00:00.000000
+    LAST_APPLIED_TRANSACTION_IMMEDIATE_COMMIT_TIMESTAMP: 0000-00-00 00:00:00.000000
+         LAST_APPLIED_TRANSACTION_START_APPLY_TIMESTAMP: 0000-00-00 00:00:00.000000
+           LAST_APPLIED_TRANSACTION_END_APPLY_TIMESTAMP: 0000-00-00 00:00:00.000000
+                                   APPLYING_TRANSACTION:
+         APPLYING_TRANSACTION_ORIGINAL_COMMIT_TIMESTAMP: 0000-00-00 00:00:00.000000
+        APPLYING_TRANSACTION_IMMEDIATE_COMMIT_TIMESTAMP: 0000-00-00 00:00:00.000000
+             APPLYING_TRANSACTION_START_APPLY_TIMESTAMP: 0000-00-00 00:00:00.000000
+                 LAST_APPLIED_TRANSACTION_RETRIES_COUNT: 0
+   LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_NUMBER: 0
+  LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_MESSAGE:
+LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_TIMESTAMP: 0000-00-00 00:00:00.000000
+                     APPLYING_TRANSACTION_RETRIES_COUNT: 0
+       APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_NUMBER: 0
+      APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_MESSAGE:
+    APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_TIMESTAMP: 0000-00-00 00:00:00.000000
+*************************** 4. row ***************************
+                                           CHANNEL_NAME:
+                                              WORKER_ID: 4
+                                              THREAD_ID: 55
+                                          SERVICE_STATE: ON
+                                      LAST_ERROR_NUMBER: 0
+                                     LAST_ERROR_MESSAGE:
+                                   LAST_ERROR_TIMESTAMP: 0000-00-00 00:00:00.000000
+                               LAST_APPLIED_TRANSACTION:
+     LAST_APPLIED_TRANSACTION_ORIGINAL_COMMIT_TIMESTAMP: 0000-00-00 00:00:00.000000
+    LAST_APPLIED_TRANSACTION_IMMEDIATE_COMMIT_TIMESTAMP: 0000-00-00 00:00:00.000000
+         LAST_APPLIED_TRANSACTION_START_APPLY_TIMESTAMP: 0000-00-00 00:00:00.000000
+           LAST_APPLIED_TRANSACTION_END_APPLY_TIMESTAMP: 0000-00-00 00:00:00.000000
+                                   APPLYING_TRANSACTION:
+         APPLYING_TRANSACTION_ORIGINAL_COMMIT_TIMESTAMP: 0000-00-00 00:00:00.000000
+        APPLYING_TRANSACTION_IMMEDIATE_COMMIT_TIMESTAMP: 0000-00-00 00:00:00.000000
+             APPLYING_TRANSACTION_START_APPLY_TIMESTAMP: 0000-00-00 00:00:00.000000
+                 LAST_APPLIED_TRANSACTION_RETRIES_COUNT: 0
+   LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_NUMBER: 0
+  LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_MESSAGE:
+LAST_APPLIED_TRANSACTION_LAST_TRANSIENT_ERROR_TIMESTAMP: 0000-00-00 00:00:00.000000
+                     APPLYING_TRANSACTION_RETRIES_COUNT: 0
+       APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_NUMBER: 0
+      APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_MESSAGE:
+    APPLYING_TRANSACTION_LAST_TRANSIENT_ERROR_TIMESTAMP: 0000-00-00 00:00:00.000000
+4 rows in set (0.00 sec)
+
+ERROR:
+No query specified
+```
+
 
 ---
 
