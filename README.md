@@ -230,6 +230,146 @@ SHOW TABLES;
 ![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/99eecd06-8a1f-43a4-a03f-16a4c0868d3f)
 
 
+
+Дополнительно:
+Обнаружил, что если база до создания реплики уже была создана на MASTER сервере, то при изменениях в базе на реплике возникает ошибка. Для исключения данной ошибки использую export / import баз данных.
+
+На сервере MASTER
+
+```sql
+SHOW DATABASES;
+```
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/a3c34c8b-083c-4efa-aba2-09fe8a73ffca)
+
+
+```bash
+mysqldump -uroot -p --skip-lock-tables --single-transaction --flush-logs --hex-blob -A | gzip -c > dump.sql.gz
+scp dump.sql.gz denis@ubuntu22-client:/home/denis/
+```
+На сервере SLAVE
+
+```sql
+STOP SLAVE;
+```
+
+```bash
+gunzip dump.sql.gz
+mysql -uroot -p -f < dump.sql
+```
+```sql
+STOP SLAVE;
+RESET SLAVE;
+SHOW DATABASES;
+```
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/cd7f7397-c1ca-45ce-8982-f27ea7fba154)
+
+
+На сервере MASTER
+
+Получаем информацию о текущем состоянии мастера 
+
+```sql
+SHOW MASTER STATUS\G;
+```
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/db619e59-3031-4fb7-bbb9-18e664c32c4d)
+
+На сервере SLAVE
+
+```sql
+CHANGE MASTER TO MASTER_HOST='ubuntu22-server', MASTER_USER='slaveuser', MASTER_PASSWORD='My7Pass@Word_9_8A_zE', MASTER_LOG_FILE='mysql-bin.000002', MASTER_LOG_POS=157;
+START SLAVE;
+SHOW SLAVE STATUS\G;
+```
+
+Проверка репликации
+
+Для теста на сервере MASTER удаляем базу test4
+
+До удаления MASTER севрер
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/4669682e-be8f-45f3-9f12-97f633a89699)
+
+До удаления SLAVE севрер
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/47d777c5-a510-4586-80b4-fcd495feae2d)
+
+После удаления MASTER севрер
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/fdf8b18a-70e3-4d24-bbb4-fb21cef88a72)
+
+После удаления SLAVE севрер
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/7bb6532b-7e7f-4ab4-b4fd-3a46452b19ff)
+
+
+```text
+mysql> SHOW SLAVE STATUS\G;
+*************************** 1. row ***************************
+               Slave_IO_State: Waiting for source to send event
+                  Master_Host: ubuntu22-server
+                  Master_User: slaveuser
+                  Master_Port: 3306
+                Connect_Retry: 60
+              Master_Log_File: mysql-bin.000002
+          Read_Master_Log_Pos: 903
+               Relay_Log_File: mysql-relay-bin.000002
+                Relay_Log_Pos: 1072
+        Relay_Master_Log_File: mysql-bin.000002
+             Slave_IO_Running: Yes
+            Slave_SQL_Running: Yes
+              Replicate_Do_DB:
+          Replicate_Ignore_DB:
+           Replicate_Do_Table:
+       Replicate_Ignore_Table:
+      Replicate_Wild_Do_Table:
+  Replicate_Wild_Ignore_Table:
+                   Last_Errno: 0
+                   Last_Error:
+                 Skip_Counter: 0
+          Exec_Master_Log_Pos: 903
+              Relay_Log_Space: 1282
+              Until_Condition: None
+               Until_Log_File:
+                Until_Log_Pos: 0
+           Master_SSL_Allowed: No
+           Master_SSL_CA_File:
+           Master_SSL_CA_Path:
+              Master_SSL_Cert:
+            Master_SSL_Cipher:
+               Master_SSL_Key:
+        Seconds_Behind_Master: 0
+Master_SSL_Verify_Server_Cert: No
+                Last_IO_Errno: 0
+                Last_IO_Error:
+               Last_SQL_Errno: 0
+               Last_SQL_Error:
+  Replicate_Ignore_Server_Ids:
+             Master_Server_Id: 1
+                  Master_UUID: 4faa5a5e-1aa8-11ef-9ec2-005056a1b8c6
+             Master_Info_File: mysql.slave_master_info
+                    SQL_Delay: 0
+          SQL_Remaining_Delay: NULL
+      Slave_SQL_Running_State: Replica has read all relay log; waiting for more updates
+           Master_Retry_Count: 86400
+                  Master_Bind:
+      Last_IO_Error_Timestamp:
+     Last_SQL_Error_Timestamp:
+               Master_SSL_Crl:
+           Master_SSL_Crlpath:
+           Retrieved_Gtid_Set:
+            Executed_Gtid_Set:
+                Auto_Position: 0
+         Replicate_Rewrite_DB:
+                 Channel_Name:
+           Master_TLS_Version:
+       Master_public_key_path:
+        Get_master_public_key: 0
+            Network_Namespace:
+1 row in set, 1 warning (0.00 sec)
+
+ERROR:
+No query specified
+```
+
+
+
+
 ---
 
 ### Задание 2
