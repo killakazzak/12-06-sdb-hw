@@ -192,6 +192,43 @@ ERROR:
 No query specified
 ```
 
+Проверяем репликацию:
+
+На сервере MASTER
+
+
+CREATE DATABASE testdb;
+USE testdb;
+
+CREATE TABLE test1 (
+  id INT PRIMARY KEY,
+  name VARCHAR(255)
+);
+
+CREATE TABLE test2 (
+  id INT PRIMARY KEY,
+  age INT
+);
+
+CREATE TABLE test3 (
+  id INT PRIMARY KEY,
+  description TEXT
+);
+
+
+На сервере SLAVE
+
+```sql
+SHOW DATABASES;
+```
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/baaf4888-8a8d-43cd-afc0-5f5b250cdcd7)
+
+```sql
+USE testdb;
+SHOW TABLES;
+```
+![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/99eecd06-8a1f-43a4-a03f-16a4c0868d3f)
+
 
 ---
 
