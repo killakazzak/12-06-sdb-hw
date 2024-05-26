@@ -294,9 +294,11 @@ SHOW SLAVE STATUS\G;
 ![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/47d777c5-a510-4586-80b4-fcd495feae2d)
 
 После удаления MASTER сервер
+
 ![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/fdf8b18a-70e3-4d24-bbb4-fb21cef88a72)
 
 После удаления SLAVE сервер
+
 ![image](https://github.com/killakazzak/12-06-sdb-hw/assets/32342205/7bb6532b-7e7f-4ab4-b4fd-3a46452b19ff)
 
 
